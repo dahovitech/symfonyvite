@@ -1,0 +1,208 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Éditer {{ language.name }} - Administration{% endblock %}
+
+{% block admin_content %}
+<div class="language-form">
+    <div class="page-header">
+        <h2>Éditer la langue: {{ language.name }}</h2>
+        <a href="{{ path('admin_language_index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div class="card">
+        <form method="post">
+            <div class="form-group">
+                <label for="code">Code de la langue *</label>
+                <input type="text" 
+                       id="code" 
+                       name="code" 
+                       class="form-control" 
+                       value="{{ language.code }}"
+                       maxlength="10" 
+                       required>
+                <small class="form-text">Code ISO de la langue (2-5 caractères)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Nom de la langue *</label>
+                <input type="text" 
+                       id="name" 
+                       name="name" 
+                       class="form-control" 
+                       value="{{ language.name }}"
+                       maxlength="255" 
+                       required>
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" 
+                           id="is_active" 
+                           name="is_active" 
+                           class="form-check-input"
+                           {% if language.isActive %}checked{% endif %}>
+                    <label for="is_active" class="form-check-label">
+                        Langue active
+                    </label>
+                    <small class="form-text">
+                        Décochez pour désactiver cette langue sur le site.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" 
+                           id="is_default" 
+                           name="is_default" 
+                           class="form-check-input"
+                           {% if language.isDefault %}checked{% endif %}>
+                    <label for="is_default" class="form-check-label">
+                        Langue par défaut
+                    </label>
+                    <small class="form-text">
+                        Si cochée, cette langue deviendra la langue de référence du site.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                <a href="{{ path('admin_language_index') }}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+
+    {% if language.isDefault %}
+        <div class="warning-notice">
+            <h4>⚠️ Langue par défaut</h4>
+            <p>
+                Cette langue est actuellement définie comme langue par défaut. 
+                Elle sera utilisée comme fallback si un contenu n'est pas disponible dans d'autres langues.
+            </p>
+        </div>
+    {% endif %}
+
+    <div class="danger-zone">
+        <h3>Zone de danger</h3>
+        <p>
+            Actions irréversibles pour cette langue.
+        </p>
+        
+        {% if not language.isDefault %}
+            <form method="post" 
+                  action="{{ path('admin_language_delete', {id: language.id}) }}" 
+                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette langue ? Cette action supprimera également toutes les traductions associées.')">
+                <button type="submit" class="btn btn-danger">
+                    Supprimer cette langue
+                </button>
+            </form>
+        {% else %}
+            <p class="text-muted">
+                Impossible de supprimer la langue par défaut. 
+                Définissez d'abord une autre langue comme langue par défaut.
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.language-form {
+    padding: 1rem;
+    max-width: 600px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.form-check {
+    margin-bottom: 1rem;
+}
+
+.form-check-input {
+    margin-right: 0.5rem;
+}
+
+.form-check-label {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.warning-notice {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    color: #856404;
+}
+
+.warning-notice h4 {
+    margin-bottom: 0.5rem;
+    color: #856404;
+}
+
+.danger-zone {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+}
+
+.danger-zone h3 {
+    margin-bottom: 1rem;
+    color: #721c24;
+    font-size: 1.1rem;
+}
+
+.danger-zone p {
+    color: #721c24;
+    margin-bottom: 1rem;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+@media (max-width: 768px) {
+    .language-form {
+        max-width: 100%;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

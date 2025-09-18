@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Services - Multilingual CMS{% endblock %}
+
+{% block body %}
+<div class="container">
+    <header class="hero">
+        <h1>Nos Services</h1>
+        <p>Découvrez notre gamme complète de services</p>
+    </header>
+
+    {% if services|length > 0 %}
+        <div class="services-grid">
+            {% for service in services %}
+                {% set translation = service.getTranslationWithFallback(currentLanguage, defaultLanguage) %}
+                {% if translation %}
+                    <div class="service-card">
+                        <h2>
+                            <a href="{{ path('service_show', {slug: service.slug}) }}">
+                                {{ translation.title }}
+                            </a>
+                        </h2>
+                        {% if translation.description %}
+                            <p class="description">{{ translation.description }}</p>
+                        {% endif %}
+                        <a href="{{ path('service_show', {slug: service.slug}) }}" class="btn btn-primary">
+                            En savoir plus
+                        </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Aucun service disponible pour le moment.</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.service-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.service-card h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.service-card h2 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.service-card h2 a:hover {
+    color: #007bff;
+}
+
+.description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

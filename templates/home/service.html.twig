@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ translation ? translation.title : 'Service' }} - Multilingual CMS{% endblock %}
+
+{% block body %}
+<div class="container">
+    <nav class="breadcrumb">
+        <a href="{{ path('home') }}">Accueil</a> &gt; 
+        <span>{{ translation ? translation.title : 'Service' }}</span>
+    </nav>
+
+    {% if translation %}
+        <article class="service-detail">
+            <header class="service-header">
+                <h1>{{ translation.title }}</h1>
+                {% if translation.description %}
+                    <div class="lead">{{ translation.description }}</div>
+                {% endif %}
+            </header>
+
+            {% if translation.detail %}
+                <div class="service-content">
+                    {{ translation.detail|nl2br }}
+                </div>
+            {% endif %}
+
+            <footer class="service-footer">
+                <a href="{{ path('home') }}" class="btn btn-secondary">
+                    ← Retour aux services
+                </a>
+            </footer>
+        </article>
+    {% else %}
+        <div class="empty-state">
+            <h1>Service non disponible</h1>
+            <p>Ce service n'est pas disponible dans la langue sélectionnée.</p>
+            <a href="{{ path('home') }}" class="btn btn-primary">
+                Retour aux services
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.breadcrumb {
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.breadcrumb a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.service-detail {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+}
+
+.service-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.lead {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.service-content {
+    padding: 2rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+.service-footer {
+    padding: 2rem;
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state h1 {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .service-header {
+        padding: 1.5rem;
+    }
+    
+    .service-header h1 {
+        font-size: 2rem;
+    }
+    
+    .service-content,
+    .service-footer {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}

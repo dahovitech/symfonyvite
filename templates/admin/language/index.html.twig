@@ -1,0 +1,166 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des langues - Administration{% endblock %}
+
+{% block admin_content %}
+<div class="language-management">
+    <div class="page-header">
+        <h2>Gestion des langues</h2>
+        <a href="{{ path('admin_language_new') }}" class="btn btn-primary">Ajouter une langue</a>
+    </div>
+
+    {% if languages|length > 0 %}
+        <div class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Statut</th>
+                        <th>Par défaut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for language in languages %}
+                        <tr>
+                            <td><code>{{ language.code }}</code></td>
+                            <td>{{ language.name }}</td>
+                            <td>
+                                <span class="badge {% if language.isActive %}badge-success{% else %}badge-secondary{% endif %}">
+                                    {% if language.isActive %}Actif{% else %}Inactif{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                {% if language.isDefault %}
+                                    <span class="badge badge-primary">Par défaut</span>
+                                {% else %}
+                                    <a href="{{ path('admin_language_set_default', {id: language.id}) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        Définir par défaut
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td class="actions">
+                                <a href="{{ path('admin_language_edit', {id: language.id}) }}" 
+                                   class="btn btn-sm btn-secondary">Éditer</a>
+                                
+                                <a href="{{ path('admin_language_toggle_active', {id: language.id}) }}" 
+                                   class="btn btn-sm {% if language.isActive %}btn-warning{% else %}btn-success{% endif %}">
+                                    {% if language.isActive %}Désactiver{% else %}Activer{% endif %}
+                                </a>
+                                
+                                {% if not language.isDefault %}
+                                    <form method="post" action="{{ path('admin_language_delete', {id: language.id}) }}" 
+                                          style="display: inline;" 
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette langue ?')">
+                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Aucune langue configurée.</p>
+            <a href="{{ path('admin_language_new') }}" class="btn btn-primary">Ajouter la première langue</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.language-management {
+    padding: 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.badge-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-outline-primary {
+    color: #007bff;
+    border: 1px solid #007bff;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.actions form {
+    display: inline;
+}
+
+.actions .btn {
+    margin-right: 0.25rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .actions {
+        white-space: nowrap;
+    }
+}
+</style>
+{% endblock %}

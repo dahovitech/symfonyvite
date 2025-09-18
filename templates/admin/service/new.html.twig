@@ -1,0 +1,285 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Nouveau service - Administration{% endblock %}
+
+{% block admin_content %}
+<div class="service-form">
+    <div class="page-header">
+        <h2>Créer un nouveau service</h2>
+        <a href="{{ path('admin_service_index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <form method="post" class="service-form-content">
+        <div class="card">
+            <div class="card-header">
+                <h3>Informations générales</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="slug">Slug du service *</label>
+                    <input type="text" 
+                           id="slug" 
+                           name="slug" 
+                           class="form-control" 
+                           placeholder="ex: mon-super-service" 
+                           required>
+                    <small class="form-text">
+                        Identifiant unique du service (sera utilisé dans l'URL). 
+                        Laissez vide pour générer automatiquement.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" 
+                               id="is_published" 
+                               name="is_published" 
+                               class="form-check-input">
+                        <label for="is_published" class="form-check-label">
+                            Publier immédiatement
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Contenu multilingue</h3>
+            </div>
+            <div class="card-body">
+                <div class="language-tabs">
+                    {% for language in languages %}
+                        <button type="button" 
+                                class="language-tab {% if loop.first %}active{% endif %}" 
+                                data-lang="{{ language.code }}">
+                            {{ language.name }}
+                            {% if language.isDefault %}
+                                <span class="default-indicator">*</span>
+                            {% endif %}
+                        </button>
+                    {% endfor %}
+                </div>
+
+                {% for language in languages %}
+                    <div class="language-content {% if loop.first %}active{% endif %}" 
+                         id="content-{{ language.code }}">
+                        <h4>{{ language.name }}</h4>
+                        
+                        <div class="form-group">
+                            <label for="title_{{ language.code }}">
+                                Titre
+                                {% if language.isDefault %}<span class="required">*</span>{% endif %}
+                            </label>
+                            <input type="text" 
+                                   id="title_{{ language.code }}" 
+                                   name="title_{{ language.code }}" 
+                                   class="form-control" 
+                                   {% if language.isDefault %}required{% endif %}>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description_{{ language.code }}">Description courte</label>
+                            <textarea id="description_{{ language.code }}" 
+                                    name="description_{{ language.code }}" 
+                                    class="form-control" 
+                                    rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="detail_{{ language.code }}">Contenu détaillé</label>
+                            <textarea id="detail_{{ language.code }}" 
+                                    name="detail_{{ language.code }}" 
+                                    class="form-control" 
+                                    rows="8"></textarea>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if languages|length == 0 %}
+                    <div class="alert alert-warning">
+                        Aucune langue n'est configurée. 
+                        <a href="{{ path('admin_language_new') }}">Créez d'abord une langue</a> 
+                        pour pouvoir ajouter du contenu.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Créer le service</button>
+            <a href="{{ path('admin_service_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.service-form {
+    padding: 1rem;
+    max-width: 800px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.service-form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.card-header {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
+}
+
+.card-header h3 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.form-check {
+    margin-bottom: 1rem;
+}
+
+.form-check-input {
+    margin-right: 0.5rem;
+}
+
+.form-check-label {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.language-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 1.5rem;
+}
+
+.language-tab {
+    padding: 0.75rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.language-tab:hover {
+    background-color: #f8f9fa;
+}
+
+.language-tab.active {
+    border-bottom-color: #007bff;
+    color: #007bff;
+    background-color: #f8f9fa;
+}
+
+.default-indicator {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.language-content {
+    display: none;
+}
+
+.language-content.active {
+    display: block;
+}
+
+.language-content h4 {
+    margin-bottom: 1.5rem;
+    color: #495057;
+    font-size: 1.1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.required {
+    color: #dc3545;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.alert a {
+    color: #856404;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .service-form {
+        max-width: 100%;
+        padding: 0.5rem;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .language-tabs {
+        flex-direction: column;
+    }
+    
+    .language-tab {
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+        border-right: none;
+    }
+    
+    .language-tab.active {
+        border-bottom-color: #dee2e6;
+        border-left: 3px solid #007bff;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

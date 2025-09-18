@@ -1,0 +1,123 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Tableau de bord - Administration{% endblock %}
+
+{% block admin_content %}
+<div class="dashboard">
+    <h2>Tableau de bord</h2>
+    
+    <div class="dashboard-cards">
+        <div class="card">
+            <div class="card-header">
+                <h3>Langues disponibles</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>{{ languages|length }}</strong> langue(s) configurée(s)</p>
+                {% if currentLanguage %}
+                    <p>Langue par défaut: <strong>{{ currentLanguage.name }}</strong></p>
+                {% endif %}
+                <a href="{{ path('admin_language_index') }}" class="btn btn-primary">Gérer les langues</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Services</h3>
+            </div>
+            <div class="card-body">
+                <p>Gérez le contenu multilingue de vos services</p>
+                <a href="{{ path('admin_service_index') }}" class="btn btn-primary">Gérer les services</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Actions rapides</h3>
+            </div>
+            <div class="card-body">
+                <a href="{{ path('admin_service_new') }}" class="btn btn-secondary">Nouveau service</a>
+                <a href="{{ path('admin_language_new') }}" class="btn btn-secondary">Nouvelle langue</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="welcome-info">
+        <h3>Bienvenue dans votre CMS multilingue</h3>
+        <p>Cette interface d'administration vous permet de:</p>
+        <ul>
+            <li>Gérer les langues disponibles sur votre site</li>
+            <li>Créer et éditer des services avec du contenu multilingue</li>
+            <li>Définir une langue par défaut avec fallback automatique</li>
+            <li>Publier/dépublier des contenus</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.dashboard {
+    padding: 1rem;
+}
+
+.dashboard h2 {
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-cards .card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 0;
+}
+
+.dashboard-cards .card-header {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
+}
+
+.dashboard-cards .card-header h3 {
+    margin: 0;
+    color: #495057;
+}
+
+.dashboard-cards .card-body {
+    padding: 1rem;
+}
+
+.dashboard-cards .btn {
+    margin-top: 1rem;
+}
+
+.welcome-info {
+    background: #e7f3ff;
+    border: 1px solid #b8daff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.welcome-info h3 {
+    color: #004085;
+    margin-bottom: 1rem;
+}
+
+.welcome-info ul {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.welcome-info li {
+    margin-bottom: 0.5rem;
+    color: #004085;
+}
+</style>
+{% endblock %}

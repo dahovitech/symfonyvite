@@ -1,0 +1,201 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des services - Administration{% endblock %}
+
+{% block admin_content %}
+<div class="service-management">
+    <div class="page-header">
+        <h2>Gestion des services</h2>
+        <a href="{{ path('admin_service_new') }}" class="btn btn-primary">Nouveau service</a>
+    </div>
+
+    {% if services|length > 0 %}
+        <div class="card">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Slug</th>
+                        <th>Statut</th>
+                        <th>Traductions</th>
+                        <th>Créé le</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in services %}
+                        {% set translation = service.getTranslationWithFallback(currentLanguage, currentLanguage) %}
+                        <tr>
+                            <td>
+                                {% if translation %}
+                                    {{ translation.title }}
+                                {% else %}
+                                    <em class="text-muted">Aucune traduction</em>
+                                {% endif %}
+                            </td>
+                            <td><code>{{ service.slug }}</code></td>
+                            <td>
+                                <span class="badge {% if service.isPublished %}badge-success{% else %}badge-secondary{% endif %}">
+                                    {% if service.isPublished %}Publié{% else %}Brouillon{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="translations-badges">
+                                    {% for serviceTranslation in service.translations %}
+                                        <span class="badge badge-info">{{ serviceTranslation.language.code }}</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>{{ service.createdAt|date('d/m/Y H:i') }}</td>
+                            <td class="actions">
+                                <a href="{{ path('admin_service_edit', {id: service.id}) }}" 
+                                   class="btn btn-sm btn-secondary">Éditer</a>
+                                
+                                <a href="{{ path('admin_service_toggle_published', {id: service.id}) }}" 
+                                   class="btn btn-sm {% if service.isPublished %}btn-warning{% else %}btn-success{% endif %}">
+                                    {% if service.isPublished %}Dépublier{% else %}Publier{% endif %}
+                                </a>
+                                
+                                {% if service.isPublished %}
+                                    <a href="{{ path('service_show', {slug: service.slug}) }}" 
+                                       class="btn btn-sm btn-info" 
+                                       target="_blank">Voir</a>
+                                {% endif %}
+                                
+                                <form method="post" 
+                                      action="{{ path('admin_service_delete', {id: service.id}) }}" 
+                                      style="display: inline;" 
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Aucun service créé.</p>
+            <a href="{{ path('admin_service_new') }}" class="btn btn-primary">Créer le premier service</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.service-management {
+    padding: 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.translations-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.translations-badges .badge {
+    font-size: 0.75rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.actions {
+    white-space: nowrap;
+}
+
+.actions form {
+    display: inline;
+}
+
+.actions .btn {
+    margin-right: 0.25rem;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .table td,
+    .table th {
+        padding: 0.5rem;
+    }
+    
+    .actions {
+        white-space: normal;
+    }
+    
+    .actions .btn {
+        margin-bottom: 0.25rem;
+        display: block;
+        width: 100%;
+    }
+}
+
+@media (max-width: 992px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
+</style>
+{% endblock %}

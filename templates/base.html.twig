@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Multilingual CMS{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block stylesheets %}
+            {# {{ vite_entry_link_tags('app') }} #}
+        {% endblock %}
+
+        {% block javascripts %}
+            {# {{ vite_entry_script_tags('app') }} #}
+        {% endblock %}
+    </head>
+
+    <body>
+        <!-- Language Switcher -->
+        {% if languages is defined and languages|length > 1 %}
+        <div class="language-switcher">
+            <select onchange="window.location.href = '{{ path('switch_language', {code: '__CODE__'}) }}'.replace('__CODE__', this.value)">
+                {% for language in languages %}
+                    <option value="{{ language.code }}" 
+                            {% if currentLanguage is defined and currentLanguage.code == language.code %}selected{% endif %}>
+                        {{ language.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <!-- Flash Messages -->
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% block body %}{% endblock %}
+
+        <script>
+            // Simple JS for language tabs in admin
+            document.addEventListener('DOMContentLoaded', function() {
+                const tabs = document.querySelectorAll('.language-tab');
+                const contents = document.querySelectorAll('.language-content');
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        const targetLang = this.dataset.lang;
+
+                        // Remove active class from all tabs and contents
+                        tabs.forEach(t => t.classList.remove('active'));
+                        contents.forEach(c => c.classList.remove('active'));
+
+                        // Add active class to clicked tab and corresponding content
+                        this.classList.add('active');
+                        document.getElementById('content-' + targetLang).classList.add('active');
+                    });
+                });
+
+                // Set first tab as active by default if none is active
+                if (!document.querySelector('.language-tab.active') && tabs.length > 0) {
+                    tabs[0].click();
+                }
+            });
+        </script>
+    </body>
+</html>
